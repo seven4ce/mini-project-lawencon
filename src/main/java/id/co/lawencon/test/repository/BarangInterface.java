@@ -28,4 +28,6 @@ public interface BarangInterface extends JpaRepository<Barang, Long> {
 
 	List<Barang> findBymodifiedDateBetween(Date startDate, Date endDate);
 
+	List<Barang> findAllByOrderByNamaBarangAsc();
+
 }

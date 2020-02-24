@@ -135,6 +135,27 @@ public class BarangController {
 	}
 	
 	
+	@RequestMapping(value = "/barang/list/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Barang> listBarangdetails(@RequestParam String startDate, @RequestParam String endDate) {
+
+		List<Barang> list = new ArrayList<Barang>();
+		try {
+			
+			if(startDate!=null & startDate!="") {				
+				list = barangInterface.findBymodifiedDateBetween(DateUtil.startDate(startDate), DateUtil.endDate(endDate));				
+			} else {
+				list = barangInterface.findAllByOrderByNamaBarangAsc();
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+
+		}
+		return list;
+
+	}
+	
 	@RequestMapping(value = "download/barang/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<InputStreamResource> downloadBarang(@RequestParam String startDate, @RequestParam String endDate) throws IOException {
 
