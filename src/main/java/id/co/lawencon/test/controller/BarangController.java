@@ -210,31 +210,16 @@ public class BarangController {
 	
 	
 	@RequestMapping(value = "/harga/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public SpesifikResponseDto getHarga() {
+	public List<HargaBarang> getHarga() {
 		List<HargaBarang> listHarga = new ArrayList<>();
 
 		try {
-
 			listHarga = hargaBarangInterface.findAll();
-			if (listHarga.size() > 0) {
-			
-				spesRsep.setRespCode("200");
-				spesRsep.setDescription("Success !");
-				spesRsep.setResult(listHarga);
-			} else {
-				spesRsep.setRespCode("400");
-				spesRsep.setDescription("Not Data Found !");
-				spesRsep.setResult(null);
-			}
 		} catch (Exception e) {
-
-			spesRsep.setRespCode("400");
-			spesRsep.setDescription("Error : Invalid Request !");
 			e.printStackTrace();
-
 		}
 
-		return spesRsep;
+		return listHarga;
 
 	}
 
@@ -267,31 +252,16 @@ public class BarangController {
 	
 	
 	@RequestMapping(value = "/type-barang/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public SpesifikResponseDto getTipeBarang() {
+	public List<TipeBarang> getTipeBarang() {
 		List<TipeBarang> listHarga = new ArrayList<>();
 
 		try {
-
-			listHarga = tipeBarangInterface.findAll();
-			if (listHarga.size() > 0) {
-			
-				spesRsep.setRespCode("200");
-				spesRsep.setDescription("Success !");
-				spesRsep.setResult(listHarga);
-			} else {
-				spesRsep.setRespCode("400");
-				spesRsep.setDescription("Not Data Found !");
-				spesRsep.setResult(null);
-			}
+			listHarga = tipeBarangInterface.findAll();			
 		} catch (Exception e) {
-
-			spesRsep.setRespCode("400");
-			spesRsep.setDescription("Error : Invalid Request !");
 			e.printStackTrace();
-
 		}
 
-		return spesRsep;
+		return listHarga;
 
 	}
 	

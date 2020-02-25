@@ -7,17 +7,20 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import id.co.lawencon.test.dto.DetailTransaksiDto;
 import id.co.lawencon.test.dto.GeneratorFiles;
 import id.co.lawencon.test.dto.ListAttachment;
@@ -39,7 +42,7 @@ import id.co.lawencon.test.util.DateUtil;
 public class TransaksiController {
 
 	SpesifikResponseDto spesRsep = new SpesifikResponseDto();
-	
+
 	List<ListAttachment> listAttachment = new ArrayList<ListAttachment>();
 	GeneratorFiles RespGenerateFile = new GeneratorFiles();
 	ListAttachment fileResp = new ListAttachment();
@@ -55,7 +58,7 @@ public class TransaksiController {
 
 	@Autowired
 	DetailTransaksiInterface detailTransaksiInterface;
-		
+
 	@RequestMapping(value = "/transaksi/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public SpesifikResponseDto saveTransaksi(@RequestBody TransaksiHeader inputTransaksi) {
 
@@ -83,13 +86,13 @@ public class TransaksiController {
 					if (currentStockBarang != null) {
 
 						CurrentStock = currentStockBarang.getStockBarang();
-						if(saveHeader.getKodeTransaksi().equalsIgnoreCase("TRX-OUT")) {
+						if (saveHeader.getKodeTransaksi().equalsIgnoreCase("TRX-OUT")) {
 							stockUptoDate = CurrentStock - jumlahBarang;
-						}else if(saveHeader.getKodeTransaksi().equalsIgnoreCase("TRX-IN")){
+						} else if (saveHeader.getKodeTransaksi().equalsIgnoreCase("TRX-IN")) {
 							stockUptoDate = CurrentStock - jumlahBarang;
-						}else {
+						} else {
 							stockUptoDate = CurrentStock;
-						}															
+						}
 						@SuppressWarnings("unused")
 						int updateStockBarang = barangInterface.updateStockBarang(stockUptoDate, id_barang);
 
@@ -113,7 +116,7 @@ public class TransaksiController {
 
 	}
 
-	@RequestMapping(value = "/transaksi/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/transaksi/detail/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public SpesifikTransaksiDto getTransaksi(@RequestParam String startDate, @RequestParam String endDate) {
 
 		List<TransaksiHeader> response = new ArrayList<>();
@@ -122,23 +125,24 @@ public class TransaksiController {
 		SpesifikTransaksiDto spesTrx = new SpesifikTransaksiDto();
 		try {
 
-			if(startDate!=null & startDate!="") {				
-				response = transaksiInterface.findBytransactionDateBetween(DateUtil.startDate(startDate), DateUtil.endDate(endDate));				
+			if (startDate != null & startDate != "") {
+				response = transaksiInterface.findBytransactionDateBetween(DateUtil.startDate(startDate),
+						DateUtil.endDate(endDate));
 			} else {
 				response = transaksiInterface.findAll();
 			}
-			
+
 			if (response != null) {
-				
+
 				for (TransaksiHeader transaksiHeader : response) {
-					DetailTransaksiDto newTrx = new DetailTransaksiDto();	
+					DetailTransaksiDto newTrx = new DetailTransaksiDto();
 					List<ListTransaksi> listtransaksi = new ArrayList<ListTransaksi>();
-					for (DetailTransaksi trxDetails : transaksiHeader.getDetailTransaksi()) {	
+					for (DetailTransaksi trxDetails : transaksiHeader.getDetailTransaksi()) {
 						try {
 							barang = barangInterface.findOne(trxDetails.getIdBarang());
 						} catch (Exception e) {
 							System.out.println("===== null =====");
-						}						
+						}
 						ListTransaksi newListTrx = new ListTransaksi();
 						newListTrx.setBarang(barang);
 						newListTrx.setIdTrxDetail(trxDetails.getIdTrxDetail());
@@ -148,9 +152,9 @@ public class TransaksiController {
 						newListTrx.setTransactionDate(trxDetails.getTransactionDate());
 						newListTrx.setModifiedBy(trxDetails.getModifiedBy());
 						newListTrx.setModifiedDate(trxDetails.getModifiedDate());
-						listtransaksi.add(newListTrx);						
+						listtransaksi.add(newListTrx);
 					}
-					
+
 					newTrx.setDetailTransaksi(listtransaksi);
 					newTrx.setIdTransaksi(transaksiHeader.getIdTransaksi());
 					newTrx.setKodeTransaksi(transaksiHeader.getKodeTransaksi());
@@ -163,7 +167,7 @@ public class TransaksiController {
 					newTrx.setModifiedBy(transaksiHeader.getModifiedBy());
 					newTrx.setModifiedDate(transaksiHeader.getModifiedDate());
 					result.add(newTrx);
-					
+
 				}
 				spesTrx.setRespCode("200");
 				spesTrx.setDescription(" Success ! ");
@@ -181,25 +185,51 @@ public class TransaksiController {
 		return spesTrx;
 
 	}
-	
-	
-	@CrossOrigin
-	@RequestMapping(value = "download/transaksi/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<InputStreamResource> downloadTransaksi(@RequestParam String startDate, @RequestParam String endDate) throws IOException {
 
-					
-			List<DetailTransaksiDto> list = getTransaksi(startDate,endDate).getResult();
-			
-			ByteArrayInputStream in = TransaksiReportExcel.TransaksiReportingExcel(list);
-		
-			HttpHeaders headers = new HttpHeaders();
-			
-			DateFormat tanggal = new SimpleDateFormat("dd-MMM-yyyy");
-			headers.add("Content-Disposition",
-				"attachment; filename=\"Laporan Transaksi " + tanggal.format(new Date()) + ".xlsx\" ");
-			return ResponseEntity.ok().headers(headers).body(new InputStreamResource(in));
+	@RequestMapping(value = "/transaksi/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<DetailTransaksiDto> getAllTransaksi(@RequestParam String startDate, @RequestParam String endDate) {
+		List<DetailTransaksiDto> result = new ArrayList<DetailTransaksiDto>();
+
+		result = getTransaksi(startDate, endDate).getResult();
+
+		return result;
 
 	}
-	
+
+	@RequestMapping(value = "detail/transaksi/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<ListTransaksi> getAllDetailTransaksi(@RequestParam String startDate,
+			@RequestParam String endDate, @RequestParam long id) {
+
+		List<ListTransaksi> response = new ArrayList<ListTransaksi>();
+		List<DetailTransaksiDto> result = new ArrayList<DetailTransaksiDto>();
+
+		result = getTransaksi(startDate, endDate).getResult();
+		for (DetailTransaksiDto detailTransaksiDto : result) {
+			if (detailTransaksiDto.getIdTransaksi() == id) {
+
+				response = detailTransaksiDto.getDetailTransaksi();
+			}
+		}
+
+		return response;
+
+	}
+
+	@RequestMapping(value = "download/transaksi/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<InputStreamResource> downloadTransaksi(@RequestParam String startDate,
+			@RequestParam String endDate) throws IOException {
+
+		List<DetailTransaksiDto> list = getTransaksi(startDate, endDate).getResult();
+
+		ByteArrayInputStream in = TransaksiReportExcel.TransaksiReportingExcel(list);
+
+		HttpHeaders headers = new HttpHeaders();
+
+		DateFormat tanggal = new SimpleDateFormat("dd-MMM-yyyy");
+		headers.add("Content-Disposition",
+				"attachment; filename=\"Laporan Transaksi " + tanggal.format(new Date()) + ".xlsx\" ");
+		return ResponseEntity.ok().headers(headers).body(new InputStreamResource(in));
+
+	}
 
 }

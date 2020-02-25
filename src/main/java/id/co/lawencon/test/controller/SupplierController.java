@@ -54,14 +54,13 @@ public class SupplierController {
 	}
 
 	@RequestMapping(value = "/supplier/listCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public SpesifikResponseDto getKodeSupplier() {
+	public List<KodeSupplier> getKodeSupplier() {
 		List<Object[]> response = null;
 		List<KodeSupplier> listCode = new ArrayList<>();
 
 		try {
 
 			response = supplierInterface.getSupplierCode();
-			if (response.size() > 0) {
 				for (Object[] supplier : response) {
 									
 					KodeSupplier code = new KodeSupplier();
@@ -70,53 +69,33 @@ public class SupplierController {
 					listCode.add(code);
 
 				}
-
-				spesRsep.setRespCode("200");
-				spesRsep.setDescription("Success !");
-				spesRsep.setResult(listCode);
-			} else {
-				spesRsep.setRespCode("400");
-				spesRsep.setDescription("Not Data Found !");
-				spesRsep.setResult(null);
-			}
 		} catch (Exception e) {
-
-			spesRsep.setRespCode("400");
-			spesRsep.setDescription("Error : Invalid Request !");
 			e.printStackTrace();
 
 		}
 
-		return spesRsep;
+		return listCode;
 
 	}
 	
+
+	
 	@RequestMapping(value = "/supplier/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public SpesifikResponseDto getSupplier() {
+	public List<Supplier> getSupplier() {
 		List<Supplier> listSupplier = new ArrayList<>();
 
 		try {
 
 			listSupplier = supplierInterface.findAll();
-			if (listSupplier.size() > 0) {
 			
 				spesRsep.setRespCode("200");
 				spesRsep.setDescription("Success !");
 				spesRsep.setResult(listSupplier);
-			} else {
-				spesRsep.setRespCode("400");
-				spesRsep.setDescription("Not Data Found !");
-				spesRsep.setResult(null);
-			}
 		} catch (Exception e) {
-
-			spesRsep.setRespCode("400");
-			spesRsep.setDescription("Error : Invalid Request !");
 			e.printStackTrace();
-
 		}
 
-		return spesRsep;
+		return listSupplier;
 
 	}
 	
