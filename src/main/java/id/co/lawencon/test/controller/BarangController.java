@@ -62,6 +62,7 @@ public class BarangController {
 		try {
 
 			Barang newInput = new Barang(); 
+			newInput.setIdBarang(inputBarang.getIdBarang());
 			newInput.setNamaBarang(inputBarang.getNamaBarang());
 			newInput.setStockBarang(inputBarang.getStockBarang());
 			newInput.setCreatedBy(inputBarang.getCreatedBy());
@@ -156,6 +157,36 @@ public class BarangController {
 
 	}
 	
+	
+	@RequestMapping(value = "/barang/find", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public DetailBarang BarangSerachId(@RequestParam long id) {
+
+		Barang result = new Barang();
+		DetailBarang barang = new DetailBarang();
+		try {		
+			result = barangInterface.findOne(id);	
+			barang.setIdBarang(result.getIdBarang());
+			barang.setNamaBarang(result.getNamaBarang());
+			barang.setIdHarga(result.getHarga().getIdHarga());
+			barang.setIdType(result.getTipeBarang().getIdType());
+			barang.setIdSupplier(result.getSupplier().getIdSupplier());
+			barang.setStockBarang(result.getStockBarang());
+			barang.setCreatedBy(result.getCreatedBy());
+			barang.setCreatedDate(result.getCreatedDate());
+			barang.setModifiedBy(result.getModifiedBy());
+			barang.setModifiedDate(result.getModifiedDate());				
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return barang;
+
+	}
+	
+	
+	
+	
 	@RequestMapping(value = "download/barang/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<InputStreamResource> downloadBarang(@RequestParam String startDate, @RequestParam String endDate) throws IOException {
 
@@ -176,9 +207,6 @@ public class BarangController {
 					"attachment; filename=\"Laporan Barang " + tanggal.format(new Date()) + ".xlsx\" ");
 				return ResponseEntity.ok().headers(headers).body(new InputStreamResource(in));
 
-			
-
-		
 
 	}
 	
