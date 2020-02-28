@@ -7,9 +7,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import id.co.lawencon.test.dto.KodeSupplier;
@@ -88,9 +90,6 @@ public class SupplierController {
 
 			listSupplier = supplierInterface.findAll();
 			
-				spesRsep.setRespCode("200");
-				spesRsep.setDescription("Success !");
-				spesRsep.setResult(listSupplier);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -98,6 +97,43 @@ public class SupplierController {
 		return listSupplier;
 
 	}
+	
+	@RequestMapping(value = "/supplier/find", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Supplier getSupplierById(@RequestParam long id) {
+		Supplier supplier = new Supplier();
+		try {
+			supplier = supplierInterface.findOne(id);			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return supplier;
+	}
+	
+
+	@RequestMapping(value = "/supplier/delete/{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public SpesifikResponseDto deleteSupplier(@PathVariable long id) {
+
+		try {
+
+			int response = supplierInterface.deleteSupplier(id);
+
+			if (response > 0) {
+				spesRsep.setRespCode("200");
+				spesRsep.setDescription(" Success ! ");
+				spesRsep.setResult(response);
+			}
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			spesRsep.setRespCode("400");
+			spesRsep.setDescription("Error : Invalid Request !");
+
+		}
+
+		return spesRsep;
+
+	}
+	
 	
 
 }

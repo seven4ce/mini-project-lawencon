@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -135,6 +136,28 @@ public class BarangController {
 
 	}
 	
+	@RequestMapping(value = "/barang/delete/{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public SpesifikResponseDto deleteBarang(@PathVariable long id) {
+		try {
+			
+			int	response = barangInterface.deleteBarang(id);
+						
+			if (response > 0) {
+				spesRsep.setRespCode("200");
+				spesRsep.setDescription(" Success ! ");
+				spesRsep.setResult(response);
+			}
+		} catch (Exception e) {
+
+			spesRsep.setRespCode("400");
+			spesRsep.setDescription("Error : Invalid Request !");
+			e.printStackTrace();
+
+		}
+		return spesRsep;
+
+	}
+	
 	
 	@RequestMapping(value = "/barang/list/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Barang> listBarangdetails(@RequestParam String startDate, @RequestParam String endDate) {
@@ -237,6 +260,33 @@ public class BarangController {
 	}
 	
 	
+	@RequestMapping(value = "/harga/delete/{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public SpesifikResponseDto deleteHarga(@PathVariable long id) {
+
+		try {
+
+			int response = hargaBarangInterface.deleteHarga(id);
+
+			if (response > 0) {
+
+				spesRsep.setRespCode("200");
+				spesRsep.setDescription(" Success ! ");
+				spesRsep.setResult(response);
+
+			}
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			spesRsep.setRespCode("400");
+			spesRsep.setDescription("Error : Invalid Request !");
+
+		}
+
+		return spesRsep;
+
+	}
+	
+	
 	@RequestMapping(value = "/harga/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<HargaBarang> getHarga() {
 		List<HargaBarang> listHarga = new ArrayList<>();
@@ -248,6 +298,20 @@ public class BarangController {
 		}
 
 		return listHarga;
+
+	}
+	
+	@RequestMapping(value = "/harga/find", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public HargaBarang getHargaById(@RequestParam long id) {
+		HargaBarang harga = new HargaBarang();
+
+		try {
+			harga = hargaBarangInterface.findOne(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return harga;
 
 	}
 
@@ -278,6 +342,47 @@ public class BarangController {
 
 	}
 	
+	
+	@RequestMapping(value = "/type-barang/delete/{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public SpesifikResponseDto deleteTipeBarang(@PathVariable long id) {
+
+		try {
+
+			int response = tipeBarangInterface.deleteTipeBarang(id);
+
+			if (response > 0) {
+
+				spesRsep.setRespCode("200");
+				spesRsep.setDescription(" Success ! ");
+				spesRsep.setResult(response);
+
+			}
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			spesRsep.setRespCode("400");
+			spesRsep.setDescription("Error : Invalid Request !");
+
+		}
+
+		return spesRsep;
+
+	}
+	
+	
+	@RequestMapping(value = "/type-barang/find", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public TipeBarang getTipeBarangById(@RequestParam long id) {
+		TipeBarang type = new TipeBarang();
+
+		try {
+			type = tipeBarangInterface.findOne(id);			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return type;
+
+	}
 	
 	@RequestMapping(value = "/type-barang/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<TipeBarang> getTipeBarang() {

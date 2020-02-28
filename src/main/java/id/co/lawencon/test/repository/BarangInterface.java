@@ -30,4 +30,9 @@ public interface BarangInterface extends JpaRepository<Barang, Long> {
 
 	List<Barang> findAllByOrderByNamaBarangAsc();
 
+	@Transactional
+	@Modifying		
+	@Query(value= "Delete From {h-schema}barang where id_barang = ?1 ", nativeQuery=true)
+	int deleteBarang(long id);
+
 }
