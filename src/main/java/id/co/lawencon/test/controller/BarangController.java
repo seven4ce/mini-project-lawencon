@@ -12,6 +12,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -137,6 +138,7 @@ public class BarangController {
 	}
 	
 	@RequestMapping(value = "/barang/delete/{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("hasRole('ADMIN')")
 	public SpesifikResponseDto deleteBarang(@PathVariable long id) {
 		try {
 			
@@ -261,6 +263,7 @@ public class BarangController {
 	
 	
 	@RequestMapping(value = "/harga/delete/{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("hasRole('ADMIN')")
 	public SpesifikResponseDto deleteHarga(@PathVariable long id) {
 
 		try {
@@ -344,6 +347,7 @@ public class BarangController {
 	
 	
 	@RequestMapping(value = "/type-barang/delete/{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("hasRole('ADMIN')")
 	public SpesifikResponseDto deleteTipeBarang(@PathVariable long id) {
 
 		try {
