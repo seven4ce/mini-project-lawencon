@@ -1,6 +1,7 @@
 package id.co.lawencon.test.entity;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -42,7 +43,7 @@ public class TransaksiHeader {
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_transaksi")
-	private Set<DetailTransaksi> detailTransaksi;
+	private List<DetailTransaksi> detailTransaksi;
 
 	@Column(name = "grand_total")
 	private long grandTotal;
@@ -99,16 +100,19 @@ public class TransaksiHeader {
 		this.kodeTransaksi = kodeTransaksi;
 	}
 
-	public Set<DetailTransaksi> getDetailTransaksi() {
-		return detailTransaksi;
-	}
+//	
 
-	public void setDetailTransaksi(Set<DetailTransaksi> detailTransaksi) {
-		this.detailTransaksi = detailTransaksi;
-	}
 
 	public long getGrandTotal() {
 		return grandTotal;
+	}
+
+	public List<DetailTransaksi> getDetailTransaksi() {
+		return detailTransaksi;
+	}
+
+	public void setDetailTransaksi(List<DetailTransaksi> detailTransaksi) {
+		this.detailTransaksi = detailTransaksi;
 	}
 
 	public void setGrandTotal(long grandTotal) {
